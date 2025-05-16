@@ -17,9 +17,9 @@
     <link href="./main.css" rel="stylesheet" />
   </head>
   <body>
-    <div id="wrap">
+    <div class="flex-col items-center" id="wrap">
       <div id="box">
-        <div id="frame">
+        <div class="flex-col" id="frame">
           <h1>grooves and grams [WIP]</h1>
           <div id="grooves"></div>
           <progress id="seeker" min="0" max="100" value="50"></progress>
@@ -31,26 +31,34 @@
           </div>
         </div>
       </div>
-      <div class="keys">
-        <button class="key" id="play"><i class="icon">play_arrow</i></button>
-        <button class="key"><i class="icon">skip_previous</i></button>
-        <button class="key">
-          <i class="icon">skip_next</i>
-        </button>
-        <button class="key">
-          <i class="icon">shuffle</i>
-        </button>
-        <button class="key track">♣</button>
-        <button class="key track">♦</button>
-        <button class="key track">♥</button>
-        <button class="key track">♠</button>
-        <div id="wheel">
-          <button id="vol-up">
-            <i class="icon">add</i>
+      <div class="flex keys">
+        <div class="flex">
+          <button class="key" id="play"><i class="icon">play_arrow</i></button>
+        </div>
+        <div class="flex">
+          <button class="key"><i class="icon">skip_previous</i></button>
+          <button class="key">
+            <i class="icon">skip_next</i>
           </button>
-          <button id="vol-down">
-            <i class="icon">remove</i>
+        </div>
+        <div class="flex">
+          <button class="key">
+            <i class="icon">shuffle</i>
           </button>
+          <button class="key track">♣</button>
+          <button class="key track">♦</button>
+          <button class="key track">♥</button>
+          <button class="key track">♠</button>
+        </div>
+        <div class="flex">
+          <div id="wheel">
+            <button id="vol-up">
+              <i class="icon">add</i>
+            </button>
+            <button id="vol-down">
+              <i class="icon">remove</i>
+            </button>
+          </div>
         </div>
       </div>
     </div>

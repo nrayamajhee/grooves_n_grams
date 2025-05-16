@@ -59,6 +59,8 @@ playButton.addEventListener("click", () => {
 
 function onYouTubeIframeAPIReady() {
   player = new YT.Player("grooves", {
+    width: 128,
+    height: 128,
     playerVars: {
       listType: "playlist",
       list: "PL8oy4JGFJfJJTvJ6jKONBclrc7G1j9Kmo",

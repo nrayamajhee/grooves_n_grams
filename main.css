@@ -1,14 +1,49 @@
 :root {
   --bg-dark: #070703;
   --bg: #101007;
-  --rad: 14px;
-  --rad-lg: 24px;
 
+  --icon: 24px;
   ---xs: 4px;
   --sm: 8px;
-  --md: 16px;
-  --lg: 24px;
-  --xl: 48px;
+  --md: 14px;
+  --lg: 18px;
+  --xl: 32px;
+  --2xl: 64px;
+  --3xl: 128px;
+}
+@media screen and (max-width: 80rem) {
+  :root {
+    --bg-dark: #070703;
+    --bg: #101007;
+    --rad: 8px;
+    --rad-lg: 16px;
+
+    --icon: 16px;
+    ---xs: 2px;
+    --sm: 6px;
+    --md: 12px;
+    --lg: 16px;
+    --xl: 24px;
+    --2xl: 48px;
+    --3xl: 64px;
+  }
+}
+@media screen and (max-width: 30rem) {
+  :root {
+    --bg-dark: #070703;
+    --bg: #101007;
+    --rad: 2px;
+    --rad-lg: 8px;
+
+    --icon: 12px;
+    ---xs: 1px;
+    --sm: 4px;
+    --md: 8px;
+    --lg: 14px;
+    --xl: 18px;
+    --2xl: 24px;
+    --3xl: 48px;
+  }
 }
 @keyframes hueRotate {
   from {
@@ -20,6 +55,14 @@
 }
 * {
   outline: none;
+}
+.flex {
+  display: flex;
+  gap: var(--sm);
+}
+.flex-col {
+  display: flex;
+  flex-direction: column;
 }
 body {
   margin: 0;
@@ -33,7 +76,7 @@ body {
   display: grid;
   place-items: center;
   font:
-    18px/1 Genos,
+    16px/1 Genos,
     sans-serif,
     sans-serif;
   font-weight: 600;
@@ -73,7 +116,7 @@ a:hover {
   font-family: "Material Icons";
   font-weight: normal;
   font-style: normal;
-  font-size: 24px;
+  font-size: var(--icon);
   display: inline-block;
   line-height: 1;
   text-transform: none;
@@ -92,25 +135,28 @@ a:hover {
   display: flex;
   flex-direction: column;
 }
-#wrap {
-  position: relative;
-  display: flex;
-  flex-direction: column;
+.items-center {
   align-items: center;
-  gap: 2px;
+}
+.gap-lg {
+  gap: var(--lg);
+}
+#wrap {
+  gap: var(--md);
+  position: relative;
   padding: var(--xl);
   padding-bottom: var(--lg);
-  width: 640px;
+  max-width: 640px;
   box-shadow: 0 5px 10px rgba(0, 0, 0, 0.5);
   border-top: 3px solid rgba(255, 255, 255, 0.1);
   border-bottom: 3px solid rgba(0, 0, 0, 0.5);
-  border-radius: var(--rad);
+  border-radius: var(--md);
 }
 #wrap::before {
   content: "";
   background: hsl(0, 10%, 5%);
   z-index: -1;
-  border-radius: var(--rad);
+  border-radius: var(--md);
   animation: hueRotate 10s linear infinite;
   position: absolute;
   top: 0;
@@ -125,10 +171,10 @@ a:hover {
 #box {
   position: relative;
   background: var(--bg-dark);
-  padding: 40px 100px;
+  padding: var(--xl) var(--lg);
   border-bottom: 3px solid rgba(255, 255, 255, 0.1);
   border-top: 3px solid rgba(0, 0, 0, 0.5);
-  border-radius: var(--rad);
+  border-radius: var(--md);
 }
 #box::after {
   content: "";
@@ -151,17 +197,14 @@ a:hover {
   );
   border-top: 3px solid rgba(255, 255, 255, 0.1);
   border-bottom: 3px solid rgba(0, 0, 0, 0.5);
-  border-radius: var(--rad);
+  border-radius: var(--md);
 }
 #frame {
-  display: flex;
-  flex-direction: column;
   gap: var(--lg);
   align-items: stretch;
   width: 100%;
-  min-width: 160px;
-  max-width: 479px;
-  border-radius: var(--rad);
+  max-width: 80rem;
+  border-radius: var(--md);
   overflow: hidden;
 }
 #labels {
@@ -176,22 +219,25 @@ a:hover {
   aspect-ratio: 1 / 1;
 }
 .keys {
-  display: flex;
-  gap: 2px;
+  gap: var(--md);
   align-items: start;
   background: black;
   padding: var(--md);
   padding-top: var(--xs);
-  border-radius: 0 0 var(--rad) var(--rad);
+  border-radius: var(--sm) var(--sm) var(--md) var(--md);
+}
+@media (max-width: 80rem) {
+  gap: var(--md);
 }
 #wheel {
+  margin-top: var(--sm);
   border: 2px solid #272727;
-  width: 64px;
-  height: 117px;
+  width: calc(var(--xl) * 1.5);
+  height: calc(var(--2xl) * 2);
   display: flex;
   justify-content: space-between;
   flex-direction: column;
-  border-radius: var(--rad);
+  border-radius: var(--md);
   color: #ddd;
   background-size: 100% 200%;
   background-position: 0% 50%;
@@ -254,13 +300,16 @@ a:hover {
 }
 .key {
   background: var(--bg);
-  padding: 80px 20px 10px 20px;
+  padding: calc(var(--xl) * 1.5) var(--md) var(--sm) var(--md);
   border: 2px solid #272727;
-  border-radius: 0 0 var(--rad) var(--rad);
+  border-radius: 0 0 var(--md) var(--md);
   color: #ddd;
-  font: 24px/1 sans-serif;
+  font-size: var(--icon);
   cursor: pointer;
   transition: transform 0.2s ease-out;
+}
+@media (max-width: 80rem) {
+  padding: var(--lg) var(--sm) var(--sm) var(--sm);
 }
 #play.key.pressed {
   background: #123f12;
