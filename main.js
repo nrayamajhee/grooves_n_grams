@@ -5,21 +5,58 @@ const volumeUp = document.querySelector("#vol-up");
 const volumeDown = document.querySelector("#vol-down");
 const wheel = document.querySelector("#wheel");
 
-const volDelta = 5;
+const volDelta = 20;
 
-volumeUp.addEventListener("click", () => {
-  const volume = player.getVolume();
-  const newVolume = Math.min(volume + volDelta, 100);
-  player.setVolume(newVolume);
-  wheel.style.backgroundPosition = `0% ${newVolume}%`;
+let holdingMouse = false;
+let increasing = 0;
+
+volumeUp.addEventListener("mousedown", () => {
+  increasing = 1;
+  holdingMouse = true;
 });
 
-volumeDown.addEventListener("click", () => {
-  const volume = player.getVolume();
-  const newVolume = Math.min(volume - volDelta, 100);
-  player.setVolume(newVolume);
-  wheel.style.backgroundPosition = `0% ${newVolume + 20}%`;
+volumeUp.addEventListener("mouseup", () => {
+  increasing = 1;
+  holdingMouse = false;
 });
+
+volumeDown.addEventListener("mousedown", () => {
+  increasing = -1;
+  holdingMouse = true;
+});
+
+volumeDown.addEventListener("mouseup", () => {
+  increasing = -1;
+  holdingMouse = false;
+});
+
+let then = performance.now();
+
+function frame(timestamp) {
+  const elapsed = timestamp - then;
+  if (elapsed >= 200 && holdingMouse) {
+    const handle = () => {
+      if (increasing == 1) {
+        const volume = player.getVolume();
+        const newVolume = Math.min(volume + volDelta, 100);
+        console.log("INCREASING VOLUME", newVolume);
+        player.setVolume(newVolume);
+        syncVolumeLabels(newVolume);
+      } else if (increasing == -1) {
+        const volume = player.getVolume();
+        const newVolume = Math.max(volume - volDelta, 0);
+        console.log("DECREASING VOLUME", newVolume);
+        player.setVolume(newVolume);
+        syncVolumeLabels(newVolume);
+      }
+      then = performance.now();
+    };
+    handle();
+  }
+  requestAnimationFrame(frame);
+}
+
+requestAnimationFrame(frame);
 
 function togglePlayer() {
   const playerState = player.getPlayerState();
@@ -31,10 +68,10 @@ function togglePlayer() {
   }
 }
 
-function syncVolumeLabels() {
-  const volume = player.getVolume();
+function syncVolumeLabels(volume) {
+  const height = 20.0 + (volume / 100) * 80.0;
   console.log("SYNCING VOLUME", volume);
-  wheel.style.backgroundPosition = `0% ${volume / 140}%`;
+  wheel.style.backgroundPosition = `0% ${height}%`;
 }
 
 function syncPlayButton() {
@@ -58,7 +95,7 @@ playButton.addEventListener("click", () => {
 });
 
 function onYouTubeIframeAPIReady() {
-  player = new YT.Player("grooves", {
+  player = new YT.Player("youtube", {
     width: 128,
     height: 128,
     playerVars: {
@@ -71,9 +108,6 @@ function onYouTubeIframeAPIReady() {
     events: {
       onReady: onPlayerReady,
       onStateChange: onPlayerStateChange,
-      onvolumechange: () => {
-        syncVolumeLabels();
-      },
     },
   });
 }
@@ -97,7 +131,8 @@ function onPlayerReady() {
   const random = Math.trunc(Math.random() * playlist.length);
   player.playVideoAt(random);
   syncPlayButton();
-  syncVolumeLabels();
+  player.setVolume(80);
+  syncVolumeLabels(80);
 }
 function onPlayerStateChange(event) {
   syncPlayButton();
