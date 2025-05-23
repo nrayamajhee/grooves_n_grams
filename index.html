@@ -62,10 +62,12 @@
     </div>
     <script src="https://www.youtube.com/iframe_api"></script>
     <script src="./main.js"></script>
-    <script
-      defer
-      src="https://static.cloudflareinsights.com/beacon.min.js"
-      data-cf-beacon='{"token": "275f39082c0a479f9936679cacdae3b2"}'
-    ></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+    
+      gtag('config', 'G-25T0QL09HT');
+    </script>
   </body>
 </html>
