@@ -1,13 +1,15 @@
 :root {
   --bg-black: #070707;
-  --bg-dark: #0e0e0e;
+  --bg-darker: #0e0e0e;
+  --bg-dark: #181818;
   --bg: #111;
   --bg-light: #171717;
   --bg-lighter: #222;
   --sh: rgba(0, 0, 0, 0.2);
   --sh-dark: rgba(0, 0, 0, 0.5);
   --hl: rgba(255, 255, 255, 0.1);
-  --hl-light: rgba(255, 255, 255, 0.05);
+  --hl-light: rgba(255, 255, 255, 0.2);
+  --hl-lighter: rgba(255, 255, 255, 0.5);
 
   --icon: 24px;
   --xs: 4px;
@@ -15,8 +17,8 @@
   --md: 12px;
   --lg: 16px;
   --xl: 32px;
-  --2xl: 96px;
-  --3xl: 256px;
+  --2xl: 64px;
+  --3xl: 96px;
 }
 @media screen and (max-width: 80rem) {
   :root {
@@ -26,28 +28,19 @@
     --md: 10px;
     --lg: 16px;
     --xl: 24px;
-    --2xl: 64px;
-    --3xl: 128px;
+    --2xl: 48px;
+    --3xl: 64px;
   }
 }
 @media screen and (max-width: 30rem) {
   :root {
-    --icon: 12px;
     --xs: 2px;
     --sm: 4px;
     --md: 8px;
     --lg: 14px;
     --xl: 18px;
-    --2xl: 48px;
-    --3xl: 64px;
-  }
-}
-@keyframes hueRotate {
-  from {
-    filter: hue-rotate(0deg);
-  }
-  to {
-    filter: hue-rotate(360deg);
+    --2xl: 32px;
+    --3xl: 42px;
   }
 }
 * {
@@ -66,13 +59,29 @@
   display: flex;
   flex-direction: column;
 }
+@keyframes rotateBackground {
+  0% {
+    background-position: 0% 70%;
+  }
+  50% {
+    background-position: 60% 70%;
+  }
+  98% {
+    background-position: 80% -50%;
+  }
+  99% {
+    background-position: -50% -50%;
+  }
+  100% {
+    background-position: 0% 70%;
+  }
+}
 body {
   margin: 0;
-  background-image: radial-gradient(
-    circle at top right,
-    rgb(68, 63, 58),
-    #03081a
-  );
+  background-color: #010513;
+  background-image: radial-gradient(circle, rgb(94, 86, 79), transparent 50%);
+  background-size: 400% 400%;
+  background-repeat: no-repeat;
   min-height: 100vh;
   color: white;
   display: grid;
@@ -82,6 +91,21 @@ body {
     sans-serif,
     sans-serif;
   font-weight: 600;
+  animation: rotateBackground 120s linear infinite;
+}
+#ocean {
+  position: absolute;
+  z-index: 1;
+  width: 100%;
+  height: 20%;
+  top: 80%;
+  left: 0;
+  background: radial-gradient(
+    circle at center,
+    rgba(0, 0, 0, 0.8) 0%,
+    rgba(0, 0, 0, 0.5) 50%,
+    rgba(0, 0, 0, 0.2) 100%
+  );
 }
 h1,
 p {
@@ -97,7 +121,6 @@ h1 {
 @media screen and (max-width: 30rem) {
   body {
     font-size: 14px;
-    place-items: start center;
     margin: var(--md);
   }
   h1 {
@@ -153,22 +176,25 @@ a:hover {
   gap: var(--lg);
 }
 #wrap {
+  z-index: 2;
   gap: var(--sm);
   position: relative;
-  padding: var(--xl) var(--2xl);
+  padding: var(--xl) var(--3xl);
   padding-bottom: var(--lg);
   max-width: 640px;
   box-shadow: -4px 8px 32px var(--sh-dark);
-  border-top: 2px solid var(--hl);
-  border-left: 2px solid var(--sh-dark);
+  border-top: 2px solid var(--hl-lighter);
   border-radius: var(--md);
 }
 #wrap::before {
   content: "";
-  background: hsl(0, 20%, 10%);
-  z-index: -1;
+  background: radial-gradient(
+    circle at top right,
+    hsl(0, 0%, 40%),
+    hsl(0, 0%, 10%)
+  );
+  z-index: -12;
   border-radius: var(--md);
-  animation: hueRotate 5s linear infinite;
   position: absolute;
   top: 0;
   left: 0;
@@ -177,45 +203,54 @@ a:hover {
 }
 @media (max-width: 30rem) {
   #wrap {
-    padding: var(--xl);
-    padding-top: var(--2xl);
+    padding: var(--lg) var(--2xl);
   }
 }
-#wrap::after,
-#box::before {
-  content: "";
-  position: absolute;
-  height: 400px;
+#box {
+  position: relative;
+  gap: var(--lg);
+  background: var(--bg-black);
+  border-bottom: 2px solid var(--hl-light);
+  border-top: 2px solid var(--sh-dark);
+  padding: var(--xl) var(--3xl);
+  border-radius: var(--md);
+  width: 20rem;
+}
+.grill {
   width: 80px;
-  background-image: radial-gradient(var(--sh-dark) 4px, transparent 4px);
+  height: 430px;
+  position: absolute;
+  top: var(--md);
+  left: calc(100% + var(--sm));
+  background-image: radial-gradient(rgba(0, 0, 0, 0.8) 4px, transparent 4px);
+  filter: drop-shadow(-1px 1px 1px rgba(255, 255, 255, 0.2));
   background-size: 16px 16px;
   background-color: transparent;
 }
-#wrap::after {
-  top: calc(var(--xl) + var(--lg));
-  right: var(--md);
-}
-#box::before {
-  left: calc(-1 * 60px - var(--md) - var(--lg));
-  top: var(--lg);
+.grill.right {
+  left: 0;
+  right: 100%;
+  transform: translateX(calc(-100% - var(--sm)));
 }
 @media (max-width: 80rem) {
-  #wrap::after,
-  #box::before {
+  .grill {
     width: 50px;
-    height: 340px;
+    height: 350px;
   }
-  #wrap::after {
-    right: var(--md);
-  }
-  #box::before {
-    left: calc(-1 * 60px + var(--md));
+  #box {
+    padding: var(--lg) var(--2xl);
+    max-width: 15rem;
   }
 }
 @media (max-width: 30rem) {
-  #wrap::after,
-  #box::before {
-    display: none;
+  #box {
+    padding: var(--lg) var(--xl);
+  }
+  .grill {
+    width: 20px;
+    height: 320px;
+    background-size: 10px 10px;
+    background-image: radial-gradient(rgba(0, 0, 0, 0.8) 3px, transparent 3px);
   }
 }
 #box::after {
@@ -239,32 +274,14 @@ a:hover {
     rgba(255, 255, 255, 0) 50%
   );
   border-top: 2px solid var(--hl);
+  border-right: 2px solid var(--hl);
   border-bottom: 2px solid var(--sh-dark);
+  border-left: 2px solid var(--sh-dark);
   border-radius: var(--md);
 }
 #volume {
   writing-mode: vertical-lr;
   height: 140px;
-}
-#box {
-  position: relative;
-  gap: var(--lg);
-  background: var(--bg-black);
-  border-bottom: 2px solid var(--hl-light);
-  border-top: 2px solid var(--sh-dark);
-  padding: var(--xl) var(--2xl);
-  border-radius: var(--md);
-  max-width: 20rem;
-}
-@media (max-width: 80rem) {
-  #box {
-    padding: var(--lg) var(--xl);
-  }
-}
-@media (max-width: 30rem) {
-  #box {
-    padding: var(--lg) var(--md);
-  }
 }
 #labels {
   display: flex;
@@ -281,9 +298,8 @@ a:hover {
   gap: var(--md);
   align-items: start;
   background: var(--bg-dark);
-  border-top: 2px solid var(--sh);
+  box-shadow: inset 0 5px 10px var(--bg-black);
   border-bottom: 2px solid var(--hl-light);
-  box-shadow: inset 0 5px 10px black;
   padding: var(--md);
   padding-top: var(--xs);
   border-radius: var(--sm) var(--sm) var(--md) var(--md);
@@ -299,7 +315,7 @@ a:hover {
   border-right-color: var(--hl);
   box-shadow: -5px 5px 5px var(--sh-dark);
   width: var(--xl);
-  height: var(--2xl);
+  height: var(--3xl);
   display: flex;
   justify-content: space-between;
   flex-direction: column;
@@ -326,25 +342,11 @@ a:hover {
     #101010,
     #010101,
     #010101,
+    #331a1a,
+    #d23f3f,
+    #331a1a,
     #101010,
     #101010,
-    #010101,
-    #010101,
-    #101010,
-    #101010,
-    #301010,
-    #a45c5c,
-    #301010,
-    #010101,
-    #010101,
-    #101010,
-    #101010,
-    #010101,
-    #010101,
-    #101010,
-    #101010,
-    #010101,
-    #010101,
     #010101,
     #010101,
     #101010,
@@ -354,10 +356,10 @@ a:hover {
     #101010,
     #101010,
     #010101,
-    #010101
+    #010101,
+    #101010,
+    #101010
   );
-  display: grid;
-  grid-template-rows: 1fr 1fr;
   border-radius: var(--md);
 }
 @media (max-width: 80rem) {
@@ -366,8 +368,10 @@ a:hover {
   }
 }
 #wheel button {
+  flex: 1;
   background: transparent;
   border: none;
+  padding: 0;
   color: transparent;
   cursor: pointer;
   background: linear-gradient(var(--sh), var(--hl));
@@ -378,15 +382,19 @@ a:hover {
   border-radius: 0 0 var(--md) var(--md);
 }
 .key {
-  background: var(--bg-light);
-  padding: var(--xl) var(--sm) var(--sm) var(--sm);
+  font-size: var(--icon);
+  line-height: 1;
+  width: var(--icon);
+  height: var(--icon);
+  box-sizing: content-box;
+  padding: var(--xl) var(--xs) var(--sm) var(--xs);
+  background: var(--bg-lighter);
   border-top: 0;
   border-right: 1px solid var(--hl);
-  border-bottom: 1px solid var(--sh-dark);
-  border-left: 1px solid var(--sh-dark);
+  border-bottom: 0;
+  border-left: 1px solid var(--sh);
   border-radius: 0 0 var(--md) var(--md);
   color: #ddd;
-  font-size: var(--icon);
   cursor: pointer;
   transition: transform 0.1s ease-out;
   transform-origin: top center;
@@ -397,19 +405,21 @@ a:hover {
     border-width: 1px;
   }
 }
-#play.key {
-  transition: transform 0.2s ease-out;
+.key.pressed {
+  transform: perspective(100px) rotateX(-10deg);
 }
 #play.key.pressed {
   background: #123f12;
-  border-color: #215d21;
-  border-top-color: transparent;
-  transform: perspective(100px) rotateX(-3deg);
+  border-right-color: #215d21;
+}
+#shuffle.key.pressed {
+  background: #3a2575;
+  border-right-color: #6b46d2;
 }
 .key:hover {
   color: white;
   background: var(--bg-lighter);
 }
-.track:active {
+.key:active {
   transform: perspective(100px) rotateX(-20deg);
 }

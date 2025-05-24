@@ -1,6 +1,9 @@
 let player;
 let playlist;
 const playButton = document.querySelector("#play");
+const nextButton = document.querySelector("#next");
+const prevButton = document.querySelector("#prev");
+const shuffleButton = document.querySelector("#shuffle");
 const volumeUp = document.querySelector("#vol-up");
 const volumeDown = document.querySelector("#vol-down");
 const wheel = document.querySelector("#wheel");
@@ -58,16 +61,6 @@ function frame(timestamp) {
 
 requestAnimationFrame(frame);
 
-function togglePlayer() {
-  const playerState = player.getPlayerState();
-  console.log("TOGGLING PLAYER", playerState);
-  if (playerState === 1) {
-    player.pauseVideo();
-  } else if (player.getPlayerState() === 2) {
-    player.playVideo();
-  }
-}
-
 function syncVolumeLabels(volume) {
   const height = 20.0 + (volume / 100) * 80.0;
   console.log("SYNCING VOLUME", volume);
@@ -89,9 +82,31 @@ function syncPlayButton() {
   }
 }
 
+nextButton.addEventListener("click", () => {
+  player.nextVideo();
+});
+
+prevButton.addEventListener("click", () => {
+  player.previousVideo();
+});
+
 playButton.addEventListener("click", () => {
-  togglePlayer();
+  const playerState = player.getPlayerState();
+  console.log("TOGGLING PLAYER", playerState);
+  if (playerState === 1) {
+    player.pauseVideo();
+  } else if (player.getPlayerState() === 2) {
+    player.playVideo();
+  }
+
   syncPlayButton();
+});
+
+let shuffle = false;
+shuffleButton.addEventListener("click", (e) => {
+  player.setShuffle(shuffle);
+  shuffle = !shuffle;
+  shuffleButton.classList.toggle("pressed");
 });
 
 function onYouTubeIframeAPIReady() {
