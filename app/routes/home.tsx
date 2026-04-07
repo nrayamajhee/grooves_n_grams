@@ -117,7 +117,7 @@ export default function Home() {
         height: 128,
         playerVars: {
           listType: "playlist",
-          list: "PL8oy4JGFJfJJTvJ6jKONBclrc7G1j9Kmo",
+          list: import.meta.env.VITE_PLAYLIST_ID,
           controls: 0,
           disablekb: 1,
           modestbranding: 1,
