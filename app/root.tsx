@@ -36,7 +36,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
         <Meta />
         <Links />
       </head>
-      <body className="m-0 min-h-screen text-white grid place-items-center font-sans text-base leading-none font-semibold sm:text-sm" style={{ backgroundImage: 'radial-gradient(circle at top right, rgb(68, 63, 58), #03081a)' }}>
+      <body className="m-0 min-h-screen text-white grid place-items-center font-sans text-base leading-none font-semibold" style={{ backgroundImage: 'radial-gradient(circle at top right, rgb(68, 63, 58), #03081a)' }}>
         {children}
         <ScrollRestoration />
         <Scripts />

@@ -7,7 +7,7 @@ type ButtonGroupProps = {
 
 export function ButtonGroup({ children, className = "" }: ButtonGroupProps) {
   return (
-    <div className={`flex gap-2 max-[30rem]:gap-1 ${className}`}>
+    <div className={`flex gap-2 ${className}`}>
       {children}
     </div>
   );

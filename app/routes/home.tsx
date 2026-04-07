@@ -5,13 +5,6 @@ import { ButtonGroup } from "../components/ButtonGroup";
 import { Keywell } from "../components/Keywell";
 import { Progress } from "../components/Progress";
 import { Wheel } from "../components/Wheel";
-import {
-  FiPlay,
-  FiPause,
-  FiSkipBack,
-  FiSkipForward,
-  FiShuffle,
-} from "react-icons/fi";
 
 declare global {
   interface Window {
@@ -31,10 +24,12 @@ export default function Home() {
   const [playlist, setPlaylist] = useState<string[]>([]);
   const playlistRef = useRef<string[]>([]);
   const [isPlaying, setIsPlaying] = useState(false);
+  const [isShuffling, setIsShuffling] = useState(false);
   const [volume, setVolume] = useState(80);
   const [progress, setProgress] = useState(0);
   const [seed, setSeed] = useState(0);
   const seedRef = useRef(0);
+  const playerReadyRef = useRef(false);
   const wheelRef = useRef<HTMLDivElement>(null);
   const holdingMouseRef = useRef(false);
   const increasingRef = useRef(0);
@@ -69,12 +64,16 @@ export default function Home() {
       }
 
       // Sync progress every 500ms
-      if (timestamp - lastProgressSync >= 500 && playerRef.current) {
+      if (timestamp - lastProgressSync >= 500 && playerRef.current && playerReadyRef.current) {
         const player = playerRef.current;
-        const current = player.getCurrentTime();
-        const duration = player.getDuration();
-        if (duration > 0) {
-          setProgress((current / duration) * 100);
+        try {
+          const current = player.getCurrentTime();
+          const duration = player.getDuration();
+          if (duration > 0) {
+            setProgress((current / duration) * 100);
+          }
+        } catch (_) {
+          // Player API not ready yet
         }
         lastProgressSync = timestamp;
       }
@@ -113,14 +112,13 @@ export default function Home() {
 
     function createPlayer() {
       playerRef.current = new YT.Player("youtube-player", {
-        width: 128,
-        height: 128,
+        width: "100%",
+        height: "100%",
         playerVars: {
           listType: "playlist",
           list: import.meta.env.VITE_PLAYLIST_ID,
+          autoplay: 1,
           controls: 0,
-          disablekb: 1,
-          modestbranding: 1,
           playsinline: 1,
         },
         events: {
@@ -133,6 +131,7 @@ export default function Home() {
     function onPlayerReady(event: YT.PlayerEvent) {
       const player = event.target;
       playerRef.current = player;
+      playerReadyRef.current = true;
 
       const pl = player.getPlaylist();
       console.log("Playlist loaded:", pl);
@@ -164,6 +163,7 @@ export default function Home() {
     }
 
     return () => {
+      playerReadyRef.current = false;
       if (playerRef.current) {
         playerRef.current.destroy();
         playerRef.current = null;
@@ -195,11 +195,11 @@ export default function Home() {
   }, []);
 
   const handleShuffle = useCallback(() => {
-    if (playlist.length > 0) {
-      const random = Math.trunc(Math.random() * playlist.length);
-      playerRef.current?.playVideoAt(random);
+    if (playerRef.current) {
+      playerRef.current.setShuffle(!isShuffling);
+      setIsShuffling(!isShuffling);
     }
-  }, [playlist]);
+  }, [isShuffling]);
 
   const handleTrackClick = useCallback(
     (trackIndex: number) => {
@@ -231,20 +231,18 @@ export default function Home() {
   };
 
   return (
-    <div className="flex flex-col items-center gap-2 max-[30rem]:gap-1 relative px-16 pt-6 pb-4 max-[30rem]:px-[18px] max-[30rem]:pt-12 max-[30rem]:pb-[14px] max-w-[640px] shadow-[-4px_8px_32px_rgba(0,0,0,0.5)] border-t-2 border-t-white/10 border-l-2 border-l-black/50 rounded-xl bg-[#1a1a1a] wrap-after">
-      <div className="flex flex-col gap-4 max-[30rem]:gap-[14px] relative bg-[#070707] border-b-2 border-b-white/5 border-t-2 border-t-black/50 px-24 py-8 max-[80rem]:px-6 max-[80rem]:py-4 max-[30rem]:px-2 max-[30rem]:py-[14px] rounded-xl max-w-[20rem] box-before box-after">
-        <h1 className="text-2xl max-[30rem]:text-xl leading-none font-bold uppercase m-0">
-          grooves and grams
+    <div className="flex flex-col items-center gap-[6px] relative px-16 pt-6 pb-4 max-w-[640px] shadow-[-4px_8px_32px_rgba(0,0,0,0.5)] border-t-2 border-t-white/50 rounded-[10px] wrap-before">
+      <div className="flex flex-col gap-4 relative bg-[#070707] border-b-2 border-b-white/20 border-t-2 border-t-black/50 px-12 py-4 rounded-[10px] box-content max-w-[15rem] box-after">
+        <div className="grill-left"></div>
+        <div className="grill-right"></div>
+        <h1 className="text-2xl leading-none font-bold uppercase m-0">
+          grooves & grams
         </h1>
-        <div className="w-full aspect-square">
-          <div id="youtube-player" className="w-full h-full"></div>
+        <div className="w-full aspect-square relative overflow-hidden">
+          <div id="youtube-player" className="absolute inset-0 w-full h-full"></div>
         </div>
         <Progress value={progress} />
-        <div className="leading-none font-bold uppercase italic self-end flex items-start gap-2 max-[30rem]:gap-1">
-          <span>With</span>
-          <i className="icon text-2xl max-[80rem]:text-base max-[30rem]:text-xs">
-            favorite
-          </i>
+        <div className="leading-none font-bold uppercase italic self-end flex items-start gap-2">
           <span>by</span>
           <a
             href="https://nishan.rayamajhee.com"
@@ -257,20 +255,20 @@ export default function Home() {
       <Keywell>
         <ButtonGroup>
           <Button onClick={handlePlayClick} isPressed={isPlaying}>
-            {isPlaying ? <FiPause /> : <FiPlay />}
+            <i className="icon">{isPlaying ? "pause" : "play_arrow"}</i>
           </Button>
         </ButtonGroup>
         <ButtonGroup>
           <Button onClick={handleSkipPrevious}>
-            <FiSkipBack />
+            <i className="icon">skip_previous</i>
           </Button>
           <Button onClick={handleSkipNext}>
-            <FiSkipForward />
+            <i className="icon">skip_next</i>
           </Button>
         </ButtonGroup>
         <ButtonGroup>
-          <Button onClick={handleShuffle}>
-            <FiShuffle />
+          <Button onClick={handleShuffle} isPressed={isShuffling} pressedColor="purple">
+            <i className="icon">shuffle</i>
           </Button>
           <Button onClick={() => handleTrackClick(0)} variant="track">
             ♣
@@ -283,6 +281,14 @@ export default function Home() {
           </Button>
           <Button onClick={() => handleTrackClick(3)} variant="track">
             ♠
+          </Button>
+        </ButtonGroup>
+        <ButtonGroup>
+          <Button variant="track">
+            ⏏
+          </Button>
+          <Button variant="track">
+            ⚙
           </Button>
         </ButtonGroup>
         <Wheel
